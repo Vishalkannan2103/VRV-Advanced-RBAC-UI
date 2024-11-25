@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced RBAC System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: #f4f4f9;
+            color: #333;
+        }
+
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+
+        .sidebar {
+            width: 250px;
+            background: #333;
+            color: white;
+            padding: 15px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .sidebar a {
+            color: white;
+            text-decoration: none;
+            display: block;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+        }
+
+        .sidebar a:hover {
+            background: #555;
+        }
+
+        .content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .card h3 {
+            margin-top: 0;
+        }
+
+        .btn {
+            background: #333;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: #555;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        table th, table td {
+            padding: 10px;
+            border: 1px solid #ddd;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .form {
+            margin: 10px 0;
+            display: flex;
+            gap: 10px;
+        }
+
+        .form input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .form select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h2>RBAC UI</h2>
+            <a href="#" onclick="switchSection('userSection')">User Management</a>
+            <a href="#" onclick="switchSection('roleSection')">Role Management</a>
+            <a href="#" onclick="switchSection('permissionSection')">Permission Management</a>
+        </div>
+        <div class="content">
+            
+            <div id="userSection" class="card">
+                <h3>User Management</h3>
+                <div class="form">
+                    <input type="text" id="userName" placeholder="Name">
+                    <input type="email" id="userEmail" placeholder="Email">
+                    <select id="userRole">
+                        <option value="Admin">Admin</option>
+                        <option value="Editor">Editor</option>
+                        <option value="Viewer">Viewer</option>
+                    </select>
+                    <button class="btn" onclick="addUser()">Add User</button>
+                </div>
+                <table id="userTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            
+            <div id="roleSection" class="card hidden">
+                <h3>Role Management</h3>
+                <div class="form">
+                    <input type="text" id="roleName" placeholder="Role Name">
+                    <button class="btn" onclick="addRole()">Add Role</button>
+                </div>
+                <table id="roleTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Role Name</th>
+                            <th>Permissions</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+
+            
+            <div id="permissionSection" class="card hidden">
+                <h3>Permission Management</h3>
+                <div class="form">
+                    <input type="text" id="permissionName" placeholder="Permission">
+                    <button class="btn" onclick="addPermission()">Add Permission</button>
+                </div>
+                <table id="permissionTable">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Permission</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const switchSection = (section) => {
+            document.querySelectorAll('.card').forEach(card => card.classList.add('hidden'));
+            document.getElementById(section).classList.remove('hidden');
+        };
+
+        
+        const addUser = () => {
+            const name = document.getElementById('userName').value;
+            const email = document.getElementById('userEmail').value;
+            const role = document.getElementById('userRole').value;
+
+            if (!name || !email || !role) {
+                alert('Please fill out all fields.');
+                return;
+            }
+
+            const tbody = document.getElementById('userTable').querySelector('tbody');
+            const row = document.createElement('tr');
+
+            row.innerHTML = `<td>${tbody.children.length + 1}</td>
+                             <td>${name}</td>
+                             <td>${email}</td>
+                             <td>${role}</td>
+                             <td><button class='btn' onclick='deleteRow(this)'>Delete</button></td>`;
+
+            tbody.appendChild(row);
+
+            document.getElementById('userName').value = '';
+            document.getElementById('userEmail').value = '';
+            document.getElementById('userRole').value = 'Admin';
+        };
+
+        
+        const addRole = () => {
+            const roleName = document.getElementById('roleName').value;
+
+            if (!roleName) {
+                alert('Please provide a role name.');
+                return;
+            }
+
+            const tbody = document.getElementById('roleTable').querySelector('tbody');
+            const row = document.createElement('tr');
+
+            row.innerHTML = `<td>${tbody.children.length + 1}</td>
+                             <td>${roleName}</td>
+                             <td><button class='btn' onclick='managePermissions(this)'>Manage Permissions</button></td>
+                             <td><button class='btn' onclick='deleteRow(this)'>Delete</button></td>`;
+
+            tbody.appendChild(row);
+
+            document.getElementById('roleName').value = '';
+        };
+
+        const managePermissions = (btn) => {
+            const row = btn.closest('tr');
+            const roleName = row.children[1].textContent;
+
+            const permissions = prompt(`Enter permissions for ${roleName} (comma-separated):`, '');
+            if (permissions !== null) {
+                row.children[2].textContent = permissions;
+            }
+        };
+
+        
+        const addPermission = () => {
+            const permissionName = document.getElementById('permissionName').value;
+
+            if (!permissionName) {
+                alert('Please provide a permission.');
+                return;
+            }
+            const tbody = document.getElementById('permissionTable').querySelector('tbody');
+            const row = document.createElement('tr');
+
+            row.innerHTML = `<td>${tbody.children.length + 1}</td>
+                             <td>${permissionName}</td>
+                             <td><button class='btn' onclick='deleteRow(this)'>Delete</button></td>`;
+
+            tbody.appendChild(row);
+
+            document.getElementById('permissionName').value = '';
+        };
+
+        
+         deleteRow = (btn) => {
+            const row = btn.closest('tr');
+            row.remove();
+
+        
+            const tbody = row.closest('tbody');
+            Array.from(tbody.children).forEach((row, index) => {
+                row.children[0].textContent = index + 1;
+            });
+        };
+    </script>
+</body>
+</html>
